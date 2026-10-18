@@ -7,7 +7,8 @@
     "build": "next build --webpack",
     "postbuild": "node scripts/fix-segment-prefetch.mjs",
     "start": "next start",
-    "lint": "eslint --max-warnings 0"
+    "lint": "eslint --max-warnings 0",
+    "package": "npm run build && node scripts/zip-out.mjs"
   },
   "dependencies": {
     "@gsap/react": "2.1.2",

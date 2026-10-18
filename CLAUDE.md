@@ -10,6 +10,17 @@ Static export only (`output: "export"`): no API routes, server actions or middle
 - `npm run build` also runs `postbuild` → `scripts/fix-segment-prefetch.mjs` (Next 16.3 export writes
   segment prefetch files under nested folders; the client requests dot-joined names). Keep it.
 - `npm run lint` must pass with zero warnings.
+- `npm run package` = build + `scripts/zip-out.mjs` → `tedxjemtec-site.zip` (gitignored) for Hostinger's
+  `public_html`. Upload steps in `DEPLOY.md`. `public/.htaccess` (HTTPS, www→bare, 404, caching) must
+  stay in `public/` so it ships with every build.
+
+## Git workflow (the user's standing instruction)
+- Repo: `web/` · branch `main` · remote `origin` = https://github.com/shivvaaaaaaa/TEDx.git.
+- Commit author is repo-local: Mehul Mendiratta <mehul.140611@gmail.com>. Never change it or use another email.
+- **After every major change** (a feature, a content update, a layout fix the user asked for), without
+  asking: `npm run lint` + `npm run build` must pass → commit with a clear message → `git push`.
+  Group small follow-up tweaks into one commit. Never commit failing lint/build, `out/`, the zip or secrets;
+  never force-push or rewrite pushed history.
 
 ## Structure: homepage scroll + three separate pages
 - `/` is a scrolling page (`src/app/page.jsx`). Sections, in order, each a `SectionShell`

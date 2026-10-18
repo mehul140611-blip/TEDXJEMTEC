@@ -25,8 +25,10 @@ npx serve out        # preview the exported site at http://localhost:3000
 `npm run build` also runs `scripts/fix-segment-prefetch.mjs` automatically (a workaround for a
 Next 16.3 static-export naming mismatch that would otherwise make link prefetches 404).
 
-**Hosting:** upload the contents of `out/`. Folders use trailing slashes (`/sponsors/` → `sponsors/index.html`).
-Point the host's 404 page at `/404.html` (on Apache/Hostinger: `ErrorDocument 404 /404.html`).
+**Hosting (live at https://tedxjemtec.org on Hostinger):** `npm run package` builds and makes
+`tedxjemtec-site.zip`, the contents of `out/` ready for `public_html`. Step-by-step upload, checks
+and troubleshooting: **[DEPLOY.md](DEPLOY.md)**. `public/.htaccess` (copied into every build) handles
+HTTPS, www → bare domain, the 404 page and caching.
 
 ## Editing content
 
