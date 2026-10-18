@@ -191,6 +191,13 @@ html[data-intro="play"] {
   object-fit: cover;
   opacity: 0;
 }
+/* Portrait screens (phones): the 16:9 intro would be cropped to a zoomed-in strip by `cover`, so
+   show the whole video centred instead; the gate's black background frames it like a letterbox. */
+@media (max-aspect-ratio: 1/1) {
+  .intro-gate video {
+    object-fit: contain;
+  }
+}
 @keyframes intro-failsafe {
   to {
     opacity: 0;

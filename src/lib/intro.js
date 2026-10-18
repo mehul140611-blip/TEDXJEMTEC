@@ -9,12 +9,15 @@ export const INTRO_HARD_CAP = 6000;
 export const INTRO_FADE = 0.7;
 
 const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+// Phones (touch screen, narrow in portrait or short in landscape) skip the intro video entirely.
+// Tablets, laptops and desktops still play it.
+const PHONE_QUERY = "(pointer: coarse) and (max-width: 767px), (pointer: coarse) and (max-height: 500px)";
 
 // Runs in <head> before first paint. Anything unexpected falls back to "skip".
 // `data-motion="ok"` lets CSS hide entrance elements from first paint (no flash before they animate in).
 export const introHeadScript = `(function(){var d=document.documentElement,m="play",r=false;try{r=matchMedia(${JSON.stringify(
   REDUCED_QUERY
-)}).matches;if(r||sessionStorage.getItem(${JSON.stringify(
+)}).matches;if(r||matchMedia(${JSON.stringify(PHONE_QUERY)}).matches||sessionStorage.getItem(${JSON.stringify(
   INTRO_SEEN_KEY
 )}))m="skip"}catch(e){m="skip"}d.dataset.intro=m;d.dataset.motion=r?"reduce":"ok"})()`;
 
@@ -24,7 +27,12 @@ export function readMotionMode() {
 
 export function readIntroMode() {
   try {
-    if (sessionStorage.getItem(INTRO_SEEN_KEY) || window.matchMedia(REDUCED_QUERY).matches) return "skip";
+    if (
+      sessionStorage.getItem(INTRO_SEEN_KEY) ||
+      window.matchMedia(REDUCED_QUERY).matches ||
+      window.matchMedia(PHONE_QUERY).matches
+    )
+      return "skip";
     return "play";
   } catch {
     return "skip";

@@ -72,7 +72,9 @@ export default function Hero() {
 
       <Container className="relative pb-20 pt-[calc(var(--nav-h)+24px)] sm:pb-24">
         <div className="relative inline-flex max-w-full flex-col items-start gap-4 p-5 sm:gap-5 sm:p-7">
-          <span data-hero-frame data-enter className="absolute inset-0">
+          {/* Decorative: must never catch taps. Without the entrance animation (reduced motion) the
+              buttons aren't lifted above it, so it would otherwise cover Register / Meet the speakers. */}
+          <span data-hero-frame data-enter aria-hidden="true" className="pointer-events-none absolute inset-0">
             <FrameCorners inset={0} />
           </span>
           <p data-hero-item data-enter className="type-label text-white/80">

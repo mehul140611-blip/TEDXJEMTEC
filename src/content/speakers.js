@@ -132,7 +132,7 @@ export const speakers = [
     id: "speaker-07",
     placeholder: false,
     honorific: "Mr.",
-    name: "Dinesh Solanki",
+    name: "Dinesh Kumar",
     title: "Software Engineer, Creator & Mindset Mentor",
     tagline: "Engineering the unseen habits that turn confusion into clarity.",
     labelLine: "MINDSET. CLARITY. PURPOSE.",

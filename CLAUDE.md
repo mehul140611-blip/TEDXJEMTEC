@@ -20,10 +20,10 @@ Static export only (`output: "export"`): no API routes, server actions or middle
 ## Git workflow (the user's standing instruction)
 - Repo: `web/` · branch `main` · remote `origin` = https://github.com/mehul140611-blip/TEDXJEMTEC.git.
 - Commit author is repo-local: Mehul Mendiratta <mehul.140611@gmail.com>. Never change it or use another email.
-- **After every major change** (a feature, a content update, a layout fix the user asked for), without
-  asking: `npm run lint` + `npm run build` must pass → commit with a clear message → `git push`.
-  Group small follow-up tweaks into one commit. Never commit failing lint/build, `out/`, the zip or secrets;
-  never force-push or rewrite pushed history.
+- **Never commit or push unless the user explicitly says so** ("commit", "push", "commit and push").
+  Every push to `main` deploys the live site, and the user reviews changes first. Make changes locally,
+  run `npm run lint` + `npm run build`, then report that they're ready to commit. When asked: never
+  commit failing lint/build, `out/`, the zip or secrets; never force-push or rewrite pushed history.
 
 ## Structure: homepage scroll + three separate pages
 - `/` is a scrolling page (`src/app/page.jsx`). Sections, in order, each a `SectionShell`
