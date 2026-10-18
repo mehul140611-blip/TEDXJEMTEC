@@ -1,0 +1,793 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens. Change a colour here and it updates everywhere.
+------------------------------------------------------------------ */
+:root {
+  --red: #eb0028; /* exact red of the official logo */
+  --red-alt: #e62b1e; /* alternative from the team, currently unused */
+  --red-deep: #8a0018;
+  --black: #000000;
+  --surface: #0d0d0f;
+  --surface-2: #16161a;
+  --line: rgba(255, 255, 255, 0.12);
+  --white: #ffffff;
+  --muted: rgba(255, 255, 255, 0.64);
+
+  --font-theme-stack: "Times New Roman", Times, serif;
+
+  --content-max: 1200px;
+  --gutter: 24px;
+  --section-y: 128px;
+  --nav-h: 72px;
+
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1); /* ≈ power3.out */
+}
+
+@media (max-width: 639px) {
+  :root {
+    --gutter: 16px;
+    --section-y: 80px;
+    --nav-h: 64px;
+  }
+}
+
+/* Only the brief's tokens exist as Tailwind colours, so no stray palette red can creep in. */
+@theme inline {
+  --color-*: initial;
+  --color-red: var(--red);
+  --color-red-deep: var(--red-deep);
+  --color-black: var(--black);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-white: var(--white);
+  --color-muted: var(--muted);
+
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
+  --font-theme: var(--font-theme-stack);
+
+  /* Desktop navigation needs ~1100px to fit logo, 7 links and the Register pill. */
+  --breakpoint-nav: 68.75rem;
+}
+
+/* ------------------------------------------------------------------
+   Type scale (desktop sizes, reduced on small screens via clamp()).
+------------------------------------------------------------------ */
+@utility type-display {
+  font-size: clamp(3.25rem, 1rem + 7.5vw, 8rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* type-display at ~85% (every clamp term × 0.85), for a slightly smaller display heading. */
+@utility type-display-sm {
+  font-size: clamp(2.7625rem, 0.85rem + 6.375vw, 6.8rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+@utility type-h2 {
+  font-size: clamp(2.25rem, 1.25rem + 3.5vw, 4rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+@utility type-h3 {
+  font-size: clamp(1.375rem, 1rem + 1vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+@utility type-body {
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+  line-height: 1.6;
+}
+
+@utility type-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* The theme line "Beyond the Frame" and its direct echoes only. */
+@utility font-theme-line {
+  font-family: var(--font-theme-stack);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ------------------------------------------------------------------
+   Layout
+------------------------------------------------------------------ */
+@utility container-site {
+  width: 100%;
+  max-width: calc(var(--content-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+/* ------------------------------------------------------------------
+   Base
+------------------------------------------------------------------ */
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--black);
+    scroll-padding-top: var(--nav-h); /* anchor jumps land below the navbar */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  /* Visible focus on every interactive element. Never remove it. */
+  :focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 3px;
+  }
+
+  main:focus,
+  .section-target:focus {
+    outline: none; /* programmatic focus targets for skip link / section navigation */
+  }
+
+  html[data-scroll-locked] body {
+    overflow: hidden;
+  }
+
+  /* Reserve the scrollbar gutter so locking scroll (intro, menu) never shifts the layout. */
+  html {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Intro gate: visible from first paint only when the <head> script says "play".
+   Without JS it never shows. A CSS failsafe fades it out by 6s even if JS stalls.
+------------------------------------------------------------------ */
+.intro-gate {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--black);
+}
+html[data-intro="play"] .intro-gate {
+  display: block;
+  animation: intro-failsafe 0.7s ease-out 5.3s forwards;
+}
+html[data-intro="play"] {
+  overflow: hidden;
+}
+.intro-gate video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+@keyframes intro-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Entrance states. Only when motion is allowed (set in <head>), so no-JS and
+   reduced-motion visitors always see content. The failsafe reveals everything
+   after 8s (intro cap 6s + entrance) if JavaScript never runs the entrance.
+------------------------------------------------------------------ */
+html[data-motion="ok"] [data-enter] {
+  opacity: 0;
+  animation: enter-failsafe 0.01s linear 8s forwards;
+}
+html[data-motion="ok"] [data-enter="bg"] {
+  opacity: 1;
+  transform: scale(1.08);
+}
+@keyframes enter-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero banner box. The banner is 2.4:1 with text baked into its sides, so it is never
+   cropped sideways (that cuts "STAY TUNED" mid-word) and its height leaves room for the
+   hero text below the 3D letters. Phones/tablets show a centre-stage crop instead. */
+.hero-media {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: min(100vw, max(45svh, calc(100svh - 420px)));
+  transform-origin: 50% 40%;
+}
+@media (min-width: 1024px) {
+  .hero-media {
+    height: max(320px, min(calc(100vw / 2.4), calc(100svh - 350px)));
+  }
+}
+
+/* Hero scroll cue: a small red dot travelling down a thin line. */
+.scroll-cue-dot {
+  animation: scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(52px);
+    opacity: 0;
+  }
+}
+
+/* Faint outlined display text used behind sections */
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.12);
+}
+
+/* Venue photo: subtle zoom inside its frame on desktop hover (never under reduced motion) */
+.venue-photo {
+  transition: transform 0.6s var(--ease-out);
+}
+@media (hover: hover) and (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .venue-frame:hover .venue-photo {
+    transform: scale(1.04);
+  }
+}
+
+/* Google Map dark treatment */
+.map-dark {
+  filter: grayscale(1) invert(0.92) contrast(0.9);
+}
+
+/* ------------------------------------------------------------------
+   Ticket: two glass halves with half-circle notches cut where the
+   perforation meets the edge. Side by side from 1024px, stacked below.
+------------------------------------------------------------------ */
+.ticket-part {
+  --notch: 14px;
+  position: relative;
+  background: rgb(22 22 26 / 0.85);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 0 90px rgba(235, 0, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  -webkit-mask-image: var(--m1), var(--m2);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--m1), var(--m2);
+  mask-composite: intersect;
+}
+.ticket-main {
+  border-radius: 20px 20px 0 0;
+  border-bottom: 0;
+  --m1: radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000);
+  --m2: radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000);
+}
+.ticket-stub {
+  border-radius: 0 0 20px 20px;
+  border-top: 0;
+  --m1: radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000);
+  --m2: radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000);
+}
+/* Perforation: dashed line along the stub's joining edge, between the notches */
+.ticket-stub::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(var(--notch) + 6px);
+  right: calc(var(--notch) + 6px);
+  height: 1px;
+  background: repeating-linear-gradient(to right, rgba(255, 255, 255, 0.28) 0 7px, transparent 7px 14px);
+}
+@media (min-width: 1024px) {
+  .ticket-main {
+    border-radius: 20px 0 0 20px;
+    border-bottom: 1px solid var(--line);
+    border-right: 0;
+    --m1: radial-gradient(circle var(--notch) at 100% 0, #0000 98%, #000);
+    --m2: radial-gradient(circle var(--notch) at 100% 100%, #0000 98%, #000);
+  }
+  .ticket-stub {
+    border-radius: 0 20px 20px 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    --m1: radial-gradient(circle var(--notch) at 0 0, #0000 98%, #000);
+    --m2: radial-gradient(circle var(--notch) at 0 100%, #0000 98%, #000);
+  }
+  .ticket-stub::before {
+    top: calc(var(--notch) + 6px);
+    bottom: calc(var(--notch) + 6px);
+    left: 0;
+    right: auto;
+    width: 1px;
+    height: auto;
+    background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.28) 0 7px, transparent 7px 14px);
+  }
+}
+
+/* Soft glare that follows the pointer (desktop tilt only) */
+.ticket-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.04) 28%,
+    transparent 55%
+  );
+  mix-blend-mode: screen;
+  -webkit-mask-image:
+    radial-gradient(circle 14px at 70% 0, #0000 98%, #000), radial-gradient(circle 14px at 70% 100%, #0000 98%, #000);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(circle 14px at 70% 0, #0000 98%, #000), radial-gradient(circle 14px at 70% 100%, #0000 98%, #000);
+  mask-composite: intersect;
+}
+
+/* Shown only where the tilt actually runs */
+.tilt-hint {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .tilt-hint {
+    display: block;
+  }
+}
+
+/* Large blurred red ring glows around the ticket section */
+.ring-glow {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(235, 0, 40, 0.75) 70deg,
+    transparent 150deg,
+    rgba(235, 0, 40, 0.4) 230deg,
+    transparent 300deg
+  );
+  -webkit-mask-image: radial-gradient(circle, transparent 58%, #000 60%, #000 68%, transparent 70%);
+  mask-image: radial-gradient(circle, transparent 58%, #000 60%, #000 68%, transparent 70%);
+  filter: blur(18px);
+  animation: ring-rotate 48s linear infinite;
+}
+[data-fx="paused"] .ring-glow {
+  animation-play-state: paused;
+}
+@keyframes ring-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* CSS loops (scroll cue, schedule head pulse, ring glows) pause while their area is off-screen. */
+[data-offscreen] *,
+[data-offscreen]::after {
+  animation-play-state: paused !important;
+}
+
+/* Speaker Reveal layout. One DOM order; areas move the controls under the photo on mobile. */
+.reveal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "title" "label" "photo" "controls" "name" "aside" "cards";
+}
+@media (min-width: 1024px) {
+  .reveal-grid {
+    grid-template-columns: minmax(0, 1fr) 340px minmax(0, 1fr);
+    grid-template-areas:
+      "title title title"
+      "label label controls"
+      "name photo aside"
+      "cards cards cards";
+    column-gap: 56px;
+    align-items: center;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Schedule timeline
+------------------------------------------------------------------ */
+.schedule-progress {
+  filter: drop-shadow(0 0 6px rgba(235, 0, 40, 0.75));
+}
+/* Until the client has measured the path, hide what would flash (full red stroke, mobile S-curve). */
+html[data-motion="ok"] .schedule-progress:not([data-ready]) {
+  opacity: 0;
+}
+@media (max-width: 1023px) {
+  .schedule-svg:not([data-mode]) {
+    visibility: hidden;
+  }
+}
+
+.schedule-head {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 9999px;
+  background: var(--red);
+  box-shadow: 0 0 14px rgba(235, 0, 40, 0.9);
+  pointer-events: none;
+}
+.schedule-head:not([data-ready]) {
+  visibility: hidden;
+}
+.schedule-head::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: rgba(235, 0, 40, 0.35);
+  animation: head-pulse 1.6s ease-out infinite;
+}
+@keyframes head-pulse {
+  from {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* A node is a zero-size point on the path; its body hangs off to one side. */
+.schedule-node {
+  position: absolute;
+  top: var(--y);
+  left: 24px;
+  width: 0;
+  height: 0;
+}
+.node-dot {
+  position: absolute;
+  left: -7px;
+  top: -7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: var(--black);
+  transition:
+    background-color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.node-wrap {
+  position: absolute;
+  top: 0;
+  left: 28px;
+  height: 0;
+  display: flex;
+  align-items: center;
+  width: min(21rem, calc(100vw - 2 * var(--gutter) - 64px));
+  --from: 16px;
+}
+.node-body {
+  transition:
+    opacity 0.3s var(--ease-out),
+    filter 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+@media (min-width: 1024px) {
+  .schedule-node {
+    left: var(--x);
+  }
+  .node-wrap {
+    width: min(21rem, 30vw); /* keeps left-side text inside the gutter at 1024px */
+  }
+  .node-wrap[data-side="left"] {
+    left: auto;
+    right: 28px;
+    justify-content: flex-end;
+    text-align: right;
+    --from: -16px;
+  }
+}
+/* Inactive until the head reaches it (only when JS drives the timeline with motion allowed). */
+html[data-motion="ok"] .schedule-node:not([data-active]) .node-body {
+  opacity: 0.35;
+  filter: blur(3px);
+  transform: translateX(var(--from));
+}
+.schedule-node[data-active] .node-dot,
+html:not([data-motion="ok"]) .node-dot {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow:
+    0 0 0 5px rgba(235, 0, 40, 0.18),
+    0 0 18px rgba(235, 0, 40, 0.7);
+}
+
+/* Team card: red frame corners draw in on hover or keyboard focus */
+.team-card .frame-corners > span {
+  transform: scale(0);
+  transition: transform 0.45s var(--ease-out);
+}
+.team-card:hover .frame-corners > span,
+.team-card:focus-within .frame-corners > span {
+  transform: scale(1);
+}
+
+/* Page wipe panel: hidden below the viewport until a transition runs. */
+.page-wipe {
+  clip-path: inset(100% 0% 0% 0%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Components
+------------------------------------------------------------------ */
+@layer components {
+  .skip-link {
+    position: fixed;
+    left: var(--gutter);
+    top: 12px;
+    z-index: 1000;
+    padding: 12px 20px;
+    border-radius: 9999px;
+    background: var(--white);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 0.875rem;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 1.75rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    text-wrap: balance;
+    transition:
+      transform 0.3s var(--ease-out),
+      box-shadow 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out),
+      background-color 0.3s var(--ease-out);
+  }
+  .btn-sm {
+    min-height: 44px;
+    padding: 0.5rem 1.125rem;
+    white-space: nowrap;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+  }
+  .btn-lg {
+    min-height: 56px;
+    padding-inline: 2.25rem;
+    font-size: 0.875rem;
+  }
+  .btn-primary {
+    background: var(--red);
+    color: var(--white);
+  }
+  .btn-primary:hover {
+    transform: scale(1.03);
+    box-shadow:
+      0 0 0 1px rgba(235, 0, 40, 0.6),
+      0 10px 36px rgba(235, 0, 40, 0.45);
+  }
+  .btn-secondary {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--white);
+  }
+  .btn-secondary:hover {
+    transform: scale(1.03);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 28px rgba(255, 255, 255, 0.1);
+  }
+  .btn-disabled {
+    background: var(--surface-2);
+    border-color: var(--line);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .card-interactive {
+    transition:
+      transform 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out);
+  }
+  .card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: rgba(235, 0, 40, 0.4);
+  }
+
+  /* Small labels that the design wants "red": red text below 24px fails contrast,
+     so the text stays white/muted and a red mark carries the accent. */
+  .accent-label::before {
+    content: "";
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    margin-right: 0.6em;
+    border-radius: 9999px;
+    background: var(--red);
+    vertical-align: 0.08em;
+  }
+
+  /* Links inside locked TEDx copy: only the underline colour changes. */
+  .locked-link {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+    transition: text-decoration-color 0.2s var(--ease-out);
+  }
+  .locked-link:hover {
+    text-decoration-color: var(--red);
+  }
+
+  /* Plain text links (footer, contact) */
+  .text-link {
+    color: var(--white);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+    transition: text-decoration-color 0.2s var(--ease-out);
+  }
+  .text-link:hover {
+    text-decoration-color: var(--red);
+  }
+
+  /* Nav link underline that grows from the left */
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--muted);
+    transition: color 0.25s var(--ease-out);
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s var(--ease-out);
+  }
+  .nav-link:hover {
+    color: var(--white);
+  }
+  .nav-link:hover::after,
+  .nav-link[aria-current]::after {
+    transform: scaleX(1);
+  }
+  .nav-link[aria-current] {
+    color: var(--white);
+  }
+
+  /* Frame motif: thin L-shaped corner brackets */
+  .frame-corners {
+    position: absolute;
+    inset: var(--frame-inset, -14px);
+    pointer-events: none;
+    --frame-color: rgba(255, 255, 255, 0.4);
+  }
+  .frame-corners[data-tone="red"] {
+    --frame-color: var(--red);
+  }
+  .frame-corners > span {
+    position: absolute;
+    width: var(--frame-size, 22px);
+    height: var(--frame-size, 22px);
+    border: 0 solid var(--frame-color);
+  }
+  /* Origins at the outer corner so a scale-in "draws" each bracket outward. */
+  .frame-corners > .fc-tl {
+    transform-origin: top left;
+    top: 0;
+    left: 0;
+    border-top-width: 1.5px;
+    border-left-width: 1.5px;
+  }
+  .frame-corners > .fc-tr {
+    transform-origin: top right;
+    top: 0;
+    right: 0;
+    border-top-width: 1.5px;
+    border-right-width: 1.5px;
+  }
+  .frame-corners > .fc-bl {
+    transform-origin: bottom left;
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 1.5px;
+    border-left-width: 1.5px;
+  }
+  .frame-corners > .fc-br {
+    transform-origin: bottom right;
+    bottom: 0;
+    right: 0;
+    border-bottom-width: 1.5px;
+    border-right-width: 1.5px;
+  }
+}

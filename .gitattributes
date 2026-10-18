@@ -1,0 +1,2 @@
+# Locked TEDx copy must stay byte-identical to _kit/content/lockedCopy.js (LF, no conversion).
+src/content/lockedCopy.js -text
