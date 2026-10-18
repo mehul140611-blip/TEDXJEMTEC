@@ -25,10 +25,10 @@ npx serve out        # preview the exported site at http://localhost:3000
 `npm run build` also runs `scripts/fix-segment-prefetch.mjs` automatically (a workaround for a
 Next 16.3 static-export naming mismatch that would otherwise make link prefetches 404).
 
-**Hosting (live at https://tedxjemtec.org on Hostinger):** `npm run package` builds and makes
-`tedxjemtec-site.zip`, the contents of `out/` ready for `public_html`. Step-by-step upload, checks
-and troubleshooting: **[DEPLOY.md](DEPLOY.md)**. `public/.htaccess` (copied into every build) handles
-HTTPS, www → bare domain, the 404 page and caching.
+**Hosting:** https://tedxjemtec.org is served by **GitHub Pages**; the domain is registered at Hostinger.
+Every push to `main` builds and publishes the site (`.github/workflows/deploy.yml`). One-time setup
+(Pages, Hostinger DNS records, HTTPS), checks and troubleshooting: **[DEPLOY.md](DEPLOY.md)**.
+For ordinary Apache hosting instead, `npm run package` makes `tedxjemtec-site.zip` (with `public/.htaccess`).
 
 ## Editing content
 

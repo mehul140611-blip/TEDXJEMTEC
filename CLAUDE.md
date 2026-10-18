@@ -10,9 +10,12 @@ Static export only (`output: "export"`): no API routes, server actions or middle
 - `npm run build` also runs `postbuild` → `scripts/fix-segment-prefetch.mjs` (Next 16.3 export writes
   segment prefetch files under nested folders; the client requests dot-joined names). Keep it.
 - `npm run lint` must pass with zero warnings.
-- `npm run package` = build + `scripts/zip-out.mjs` → `tedxjemtec-site.zip` (gitignored) for Hostinger's
-  `public_html`. Upload steps in `DEPLOY.md`. `public/.htaccess` (HTTPS, www→bare, 404, caching) must
-  stay in `public/` so it ships with every build.
+- **Deploy = push to `main`.** `.github/workflows/deploy.yml` runs `npm ci` → lint → build on Ubuntu and
+  publishes `out/` to GitHub Pages (custom domain tedxjemtec.org; DNS at Hostinger, domain only). So every
+  push goes live in ~3 minutes; a failing lint/build publishes nothing. Setup + troubleshooting: `DEPLOY.md`.
+- Site is served at the domain root: no `basePath`. It looks broken at `<user>.github.io/TEDx/`; that's expected.
+- `npm run package` = build + `scripts/zip-out.mjs` → `tedxjemtec-site.zip` (gitignored), only for a future
+  Apache/Hostinger hosting plan. `public/.htaccess` is for that case (the Pages workflow deletes it from `out/`).
 
 ## Git workflow (the user's standing instruction)
 - Repo: `web/` · branch `main` · remote `origin` = https://github.com/shivvaaaaaaa/TEDx.git.
