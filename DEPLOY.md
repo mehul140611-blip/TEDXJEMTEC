@@ -1,7 +1,7 @@
 # Putting tedxjemtec.org live
 
 **Setup:** the domain is registered at **Hostinger** (domain only, no hosting plan). The site is hosted
-free on **GitHub Pages** from the repo https://github.com/shivvaaaaaaa/TEDx.
+free on **GitHub Pages** from the repo https://github.com/mehul140611-blip/TEDXJEMTEC.
 
 **How it works:** every push to `main` runs `.github/workflows/deploy.yml` (Actions tab). It installs,
 lints, builds the static export and publishes `out/` to GitHub Pages, usually within 2–3 minutes. If lint
@@ -15,19 +15,19 @@ Do the steps in this order.
 
 ### 1. Turn on GitHub Pages
 
-1. Open https://github.com/shivvaaaaaaa/TEDx → **Settings** → **Pages** (left menu, under "Code and automation").
+1. Open https://github.com/mehul140611-blip/TEDXJEMTEC → **Settings** → **Pages** (left menu, under "Code and automation").
 2. **Build and deployment → Source:** choose **GitHub Actions**. (Not "Deploy from a branch".)
 3. Go to the **Actions** tab. Open the latest **Deploy to GitHub Pages** run. If it's red (it ran before
    Pages was on), click **Re-run all jobs**. If there's no run, click **Deploy to GitHub Pages** → **Run workflow**.
 4. Wait for both jobs (build, deploy) to turn green.
 
-> Don't judge the site by the temporary `shivvaaaaaaa.github.io/TEDx/` address: the site is built for the
+> Don't judge the site by the temporary `mehul140611-blip.github.io/TEDXJEMTEC/` address: the site is built for the
 > root of a domain, so it looks broken there. It works once the custom domain is set below.
 
 ### 2. Verify the domain with GitHub (prevents anyone else claiming it)
 
 1. GitHub → your profile picture → **Settings** → **Pages** (left menu) → **Add a domain** → `tedxjemtec.org`.
-2. GitHub shows a **TXT record**: a name like `_github-pages-challenge-shivvaaaaaaa` and a long value.
+2. GitHub shows a **TXT record**: a name like `_github-pages-challenge-mehul140611-blip` and a long value.
    Keep this tab open.
 3. Add that TXT record in Hostinger (step 3.4 below), wait a few minutes, then click **Verify**.
 
@@ -50,8 +50,8 @@ Do the steps in this order.
    | A | `@` | `185.199.109.153` |
    | A | `@` | `185.199.110.153` |
    | A | `@` | `185.199.111.153` |
-   | CNAME | `www` | `shivvaaaaaaa.github.io` |
-   | TXT | the name from step 2.2, e.g. `_github-pages-challenge-shivvaaaaaaa` | the value from step 2.2 |
+   | CNAME | `www` | `mehul140611-blip.github.io` |
+   | TXT | the name from step 2.2, e.g. `_github-pages-challenge-mehul140611-blip` | the value from step 2.2 |
 
    Optional (IPv6): AAAA `@` → `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`.
 
@@ -96,7 +96,7 @@ To roll back: in GitHub, revert the bad commit (or ask Claude to), and the previ
 | Hostinger "parked domain" page | The old parking **A** record is still there, or DNS hasn't spread. Re-check step 3.3; wait. |
 | GitHub DNS check fails: "improperly configured" | Make sure there are exactly the four `@` A records and the `www` CNAME; no extra A/AAAA/ALIAS for `@`. Wait up to 24 h. |
 | **Not secure** / Enforce HTTPS greyed out | Certificate not issued yet. Wait an hour after the DNS check passes; remove and re-add the custom domain if it's stuck for a day. |
-| Site loads **unstyled** at `shivvaaaaaaa.github.io/TEDx/` | Expected (see step 1). Use `https://tedxjemtec.org`. |
+| Site loads **unstyled** at `mehul140611-blip.github.io/TEDXJEMTEC/` | Expected (see step 1). Use `https://tedxjemtec.org`. |
 | Old version still showing | Wait 10 minutes (Pages cache), then private window / Ctrl+Shift+R. Check the latest Actions run is green. |
 | Map or Register link blank | Ad-blocker, or no internet on the phone; they load from Google and the registration site. |
 

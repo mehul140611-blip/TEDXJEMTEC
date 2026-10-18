@@ -18,7 +18,7 @@ Static export only (`output: "export"`): no API routes, server actions or middle
   Apache/Hostinger hosting plan. `public/.htaccess` is for that case (the Pages workflow deletes it from `out/`).
 
 ## Git workflow (the user's standing instruction)
-- Repo: `web/` · branch `main` · remote `origin` = https://github.com/shivvaaaaaaa/TEDx.git.
+- Repo: `web/` · branch `main` · remote `origin` = https://github.com/mehul140611-blip/TEDXJEMTEC.git.
 - Commit author is repo-local: Mehul Mendiratta <mehul.140611@gmail.com>. Never change it or use another email.
 - **After every major change** (a feature, a content update, a layout fix the user asked for), without
   asking: `npm run lint` + `npm run build` must pass → commit with a clear message → `git push`.
