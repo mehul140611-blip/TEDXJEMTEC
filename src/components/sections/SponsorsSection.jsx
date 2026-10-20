@@ -5,16 +5,18 @@ import Reveal from "@/components/ui/Reveal";
 import { newTabProps } from "@/lib/a11y";
 
 // Tile and logo caps per group. The event logo above is 64px tall (≈460px wide), so every
-// sponsor logo renders smaller: featured ≤ 240×96px, partners ≤ 180×80px.
+// sponsor logo renders smaller: featured (ticketing partner) ≤ 240×96px; partners ≤ 160×48px (≤ 36px tall on
+// phones, where the event logo scales down to ≈ 46px), i.e. under the
+// event logo in both width and height (TEDx rule: partner logos are always smaller than the event logo).
 const sizes = {
   featured: { tile: "h-[200px] w-full max-w-[480px] p-8", logo: "max-h-[96px] max-w-[min(240px,100%)]" },
-  standard: { tile: "aspect-[7/4] w-full p-4 sm:p-7", logo: "max-h-[min(80px,100%)] max-w-[min(180px,100%)]" },
+  standard: { tile: "aspect-[7/4] w-full p-4 sm:p-7", logo: "max-h-[min(36px,100%)] max-w-[min(160px,100%)] sm:max-h-[min(48px,100%)]" },
 };
 
-// Partner grid as centred flex rows (a short last row sits in the middle): 3 per row on desktop,
+// Partner grid as centred flex rows (a short last row sits in the middle): 4 per row on desktop,
 // 2 on tablets and from 375px, 1 on the smallest phones.
 const partnerWidth =
-  "w-full min-[375px]:w-[calc((100%_-_16px)/2)] sm:w-[calc((100%_-_24px)/2)] lg:w-[calc((100%_-_48px)/3)]";
+  "w-full min-[375px]:w-[calc((100%_-_16px)/2)] sm:w-[calc((100%_-_24px)/2)] lg:w-[calc((100%_-_72px)/4)]";
 
 /** White tile with the logo in full colour, and the sponsor's name under it. A link only when `url` is set. */
 function SponsorTile({ sponsor, featured }) {
@@ -69,7 +71,8 @@ export default function SponsorsSection({ sponsors, tiers }) {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(235,0,40,0.18),transparent_60%)]"
       />
       <Container className="relative flex flex-col items-center text-center">
-        <Logo eager className="h-16 w-auto" />
+        {/* 64px tall (460px wide) where it fits; on narrow phones the whole logo scales down, never squashed. */}
+        <Logo eager className="h-auto w-[460px] max-w-full" />
         <p className="type-label mt-10 text-muted">
           <Brand suffix=" 2026" />
         </p>
@@ -89,7 +92,7 @@ export default function SponsorsSection({ sponsors, tiers }) {
               className={
                 group.featured
                   ? "flex flex-col items-center gap-6"
-                  : "mx-auto flex max-w-[888px] flex-wrap justify-center gap-4 sm:gap-6"
+                  : "mx-auto flex max-w-[1192px] flex-wrap justify-center gap-4 sm:gap-6"
               }
             >
               {group.items.map((sponsor) => (

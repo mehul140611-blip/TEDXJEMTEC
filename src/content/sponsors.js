@@ -4,7 +4,7 @@
  *
  * Shape: { id, name, logo, url, tier }
  *   logo  path under /public; transparent or white-background PNG/WebP/SVG. Shown in full colour
- *         on a white tile, always smaller than the event logo (featured ≤ 240×96px, others ≤ 180×80px).
+ *         on a white tile, always smaller than the event logo (featured ≤ 240×96px, partners ≤ 160×48px).
  *   url   the partner's website (the tile becomes a link opening in a new tab), or null
  *   tier  one of the `tier` values in `sponsorTiers` below
  *
@@ -23,5 +23,4 @@ export const sponsors = [
   { id: "books-tycoon", name: "Books Tycoon", logo: "/sponsors/books-tycoon.png", url: null, tier: "Partner" },
   { id: "vardiano", name: "Vardiano", logo: "/sponsors/vardiano.png", url: null, tier: "Partner" },
   { id: "perfume-theka", name: "The Perfume Theka", logo: "/sponsors/perfume-theka.png", url: null, tier: "Partner" },
-  { id: "shekunj", name: "Shekunj Education", logo: "/sponsors/shekunj.png", url: null, tier: "Partner" },
 ];

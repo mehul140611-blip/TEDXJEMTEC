@@ -92,8 +92,8 @@ Static export only (`output: "export"`): no API routes, server actions or middle
   equal heights). `TeamCard`: square photo (`object-position: center 30%`), name, role as the
   red-dot label (wraps under the text), description/LinkedIn only when present. Alt "Photo of [Name]".
 - `sponsors.js`: `sponsors` + `sponsorTiers` (order, title, `featured`). `SponsorsSection` renders a
-  featured 480×200 tile per Ticketing Partner, then a 3/2/1-column grid (2 from 375px) of 280×160 white
-  tiles, logos in full colour (featured ≤ 240×96, others ≤ 180×80; always smaller than the 64px event
+  featured 480×200 tile per Ticketing Partner, then a 4/2/1-column grid (2 from 375px) of 280×160 white
+  tiles, logos in full colour (featured ≤ 240×96, partners ≤ 160×48; always smaller than the 64px event
   logo), name in muted text under each tile. Tiles are links only when `url` is set.
 
 ## TEDx rules (non-negotiable)
